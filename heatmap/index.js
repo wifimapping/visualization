@@ -4,7 +4,7 @@ function median(values) {
 }
 
 function max(values) {
-    return values.sort((a, b) => a - b).pop();
+    return values.sort((a, b) => a - b)[values.length - 1];
 }
 
 function mean(values) {
@@ -41,7 +41,7 @@ angular
     );
 
     var cfg = {
-      "radius": .0003,
+      "radius": .0001,
       "scaleRadius": true,
       "useLocalExtrema": false,
 
@@ -50,7 +50,7 @@ angular
       valueField: 'level',
 
       useGradientOpacity: false,
-      blur: .8,
+      blur: 0,
       opacity: .5
     };
 
