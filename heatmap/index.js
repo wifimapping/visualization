@@ -40,7 +40,7 @@ angular
       }
     );
 
-    var cfg = {
+    /*var cfg = {
       "radius": .0001,
       "scaleRadius": true,
       "useLocalExtrema": false,
@@ -52,20 +52,22 @@ angular
       useGradientOpacity: false,
       blur: 0,
       opacity: .5
-    };
+  };
 
 
-    var heatmapLayer = new HeatmapOverlay(cfg);
+    var heatmapLayer = new HeatmapOverlay(cfg);*/
+
+    var heatmapLayer;
 
     var map = new L.Map('map', {
       center: new L.LatLng(40.7295134, -73.9964609),
       zoom: 14,
       maxZoom: 18,
       minZoom: 12,
-      layers: [baseLayer, heatmapLayer]
+      layers: [baseLayer]
     });
 
-    var previousSSID = "";
+    /*var previousSSID = "";
     function display(groups) {
         var agg = [];
 
@@ -106,11 +108,37 @@ angular
         }
 
         previousSSID = $scope.params.ssid;
-    }
+    }*/
 
+    map.on('zoomstart', function() {
+        window.stop();
+    });
 
     $scope.execute = function() {
-        var params = {
+        if (heatmapLayer) {
+            map.removeLayer(heatmapLayer);
+        } else {
+            map.on('zoomend', function() {
+                $scope.execute();
+            });
+        }
+
+        heatmapLayer = L.tileLayer(
+          'http://capstone.cloudapp.net/wifipulling/tile/{z}/{x}/{y}/?ssid={ssid}&agg_function={agg_function}', {
+            ssid: $scope.params.ssid,
+            agg_function: $scope.params.aggregation,
+            maxZoom: 18,
+            opacity: .5
+          }
+        );
+
+        map.addLayer(heatmapLayer);
+
+        map.on('zoomend', function() {
+            $scope.execute();
+        });
+
+        /*var params = {
             ssid: $scope.params.ssid, //page_size: 5000,
             columns: ['level', 'lat', 'lng']
         };
@@ -144,6 +172,6 @@ angular
 
                 display(groups);
             });
-        }
+        }*/
     };
 });
